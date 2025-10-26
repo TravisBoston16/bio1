@@ -1,0 +1,296 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+# R Data Analysis Tutorial for Beginners
+
+This tutorial will guide you through the process of basic data analysis using R. We will use R's built-in datasets `iris` and `mtcars` to demonstrate various data operations and analysis techniques.
+
+## 1. Loading Datasets
+
+First, we need to load the datasets we'll be using. R has many built-in datasets, and we'll use two of them: `iris` and `mtcars`.
+
+```{r}
+data(iris)
+data(mtcars)
+```
+
+These two lines of code will load the `iris` and `mtcars` datasets into our R environment.
+
+## 2. Viewing Basic Dataset Information
+
+Basic data structure, Vector
+
+```{r}
+# numeric
+numeric_vector <- c(1, 2, 3, 4.5)
+integer_vector <- c(1L, 2L, 3L)  # 'L' 表示整数
+
+# character
+char_vector <- c("a", "b", "c")
+
+# logical
+logical_vector <- c(TRUE, FALSE, TRUE)
+
+# complex
+complex_vector <- c(1+2i, 3-4i)
+
+# raw
+raw_vector <- as.raw(c(1, 2, 3))
+
+# factor
+factor_vector <- factor(c("small", "medium", "large"))
+
+# date
+date_vector <- as.Date(c("2023-01-01", "2023-01-02"))
+
+# check type
+sapply(list(numeric_vector, integer_vector, char_vector, logical_vector, 
+            complex_vector, raw_vector, factor_vector, date_vector), class)
+```
+
+Factor looks unfamiliar?
+
+Categorical variable (Ordered & Unordered)
+
+```{r}
+education <- factor(c("High School", "Bachelor", "Master", "PhD","High School"),
+                    levels = c("High School", "Bachelor", "Master", "PhD"),
+                    ordered = TRUE)
+education
+```
+
+With that knowledge, we canBefore start the analysis, we need to understand our datasets. We can use several functions to view the basic structure and statistical information of the data.
+
+```{r}
+# View the first few rows of data
+head(iris)
+head(mtcars)
+
+print("-------- data structure --------")
+# View data structure
+str(iris)
+print("-------- cars --------")
+str(mtcars)
+
+print("-------- data summary --------")
+# View data summary
+summary(iris)
+print("-------- cars --------")
+summary(mtcars)
+```
+
+The `head()` function displays the first few rows of the dataset. The `str()` function shows the structure of the data, including variable types and some sample values. The `summary()` function provides basic statistical information for each variable.
+
+## 3. Basic Operations on Data Frames
+
+Data frames in R are very flexible data structures, allowing us to easily select, modify, and add data.
+
+### Selecting Rows and Columns
+
+```{r}
+# Select the first column of the iris dataset
+print("iris first column")
+iris[, 1] # Here in [,], the first element is the row index, the second is the column index
+
+# Select the mpg column of the mtcars dataset
+print("mt cars mpg")
+mtcars$mpg       
+
+# Select the 1st to 3rd columns of the iris dataset
+iris[, 1:3]      
+
+# Select rows where Species is setosa
+subset(iris, Species == "setosa")   
+
+# Select rows where mpg is greater than 20
+subset(mtcars, mpg > 20)            
+```
+
+### Adding New Columns
+
+We can create new columns based on existing ones.
+
+```{r}
+# Add Sepal length-to-width ratio
+iris$Sepal_Ratio <- iris$Sepal.Length / iris$Sepal.Width  
+
+# Add horsepower-to-weight ratio
+mtcars$hp_wt_ratio <- mtcars$hp / mtcars$wt               
+```
+
+## 4. Data Summarization and Aggregation
+
+For EDA.
+
+R provides various methods to calculate basic statistics and summarize data by groups.
+
+### Basic Statistics
+
+```{r}
+mean(iris$Sepal.Length)
+sd(iris$Sepal.Length)
+min(iris$Sepal.Length)
+max(iris$Sepal.Length)
+
+mean(mtcars$mpg)
+median(mtcars$mpg)
+quantile(mtcars$mpg)
+```
+
+### Group Summarization
+
+```{r}
+aggregate(Sepal.Length ~ Species, data = iris, mean)
+aggregate(mpg ~ cyl, data = mtcars, mean)
+```
+
+The `aggregate()` function allows us to group by one variable and then apply a function (like mean) to another variable.
+
+## 5. Conditional Statements and Loops
+
+R supports common programming structures like conditional statements and loops.
+
+### Conditional Statements
+
+```{r}
+iris$Sepal_Long <- ifelse(iris$Sepal.Length > 5, "Yes", "No")
+table(iris$Sepal_Long)
+iris$Sepal_Long
+```
+
+The `ifelse()` function creates a new vector based on a condition.
+
+### Loops
+ 
+```{r}
+for (i in 1:nrow(mtcars)) {
+  total_power <- mtcars$hp[i] * mtcars$wt[i]
+  print(paste("Car", rownames(mtcars)[i], "total power:", total_power))
+}
+```
+
+This loop calculates the "total power" (horsepower multiplied by weight) for each car and prints the result.
+
+## 6. Visualization
+
+Data visualization is an important part of data analysis. R provides powerful visualization tools.
+
+### Basic Plotting
+
+```{r}
+plot(iris$Sepal.Length, iris$Petal.Length, # numeric vector
+     main = "Sepal vs Petal Length",
+     xlab = "Sepal Length", ylab = "Petal Length",
+     col = iris$Species, pch = 19)
+
+boxplot(mpg ~ cyl, data = mtcars, main = "MPG by Cylinder", xlab = "Cylinders", ylab = "MPG")
+```
+
+### Using ggplot2
+
+ggplot2 is a popular R plotting package that provides more flexible and aesthetically pleasing graphics.
+
+```{r}
+# Install and load ggplot2
+install.packages("ggplot2")
+library(ggplot2)
+
+# Create a scatter plot
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+  geom_point(size = 3) +
+  labs(title = "Sepal Length vs Petal Length") +
+  theme_minimal()
+
+# Create a scatter plot with grouping
+ggplot(mtcars, aes(x = hp, y = mpg, color = factor(cyl))) +
+  geom_point(size = 3) +
+  labs(title = "MPG vs Horsepower", x = "Horsepower", y = "MPG") +
+  theme_minimal()
+```
+
+## 7. Linear Regression
+
+Linear regression is a common statistical analysis method used to study relationships between variables.
+
+### Simple Linear Regression
+
+```{r}
+model <- lm(mpg ~ hp, data = mtcars)
+summary(model)
+
+# Plot regression line
+plot(mtcars$hp, mtcars$mpg, main = "MPG vs Horsepower with Regression Line", xlab = "Horsepower", ylab = "MPG")
+abline(model, col = "red")
+```
+
+### Multiple Linear Regression
+
+```{r}
+model_multi <- lm(mpg ~ hp + wt, data = mtcars)
+summary(model_multi)
+```
+
+## 8. Data Import and Export
+
+R can easily read and write various data formats.
+
+```{r}
+write.csv(iris, "iris_modified.csv")
+save(iris, mtcars, file = "datasets.RData")
+load("datasets.RData")
+```
+
+## 9. Using dplyr for Data Processing
+
+dplyr is a powerful data manipulation package that provides intuitive syntax.
+
+```{r}
+install.packages("dplyr")
+library(dplyr)
+
+# Select columns
+iris_select <- select(iris, Sepal.Length, Sepal.Width)
+
+# Filter rows
+mtcars_filter <- filter(mtcars, mpg > 20)
+
+# Group summarization
+iris_grouped <- iris %>%
+  group_by(Species) %>%
+  summarise(avg_sepal_length = mean(Sepal.Length))
+
+print(iris_grouped)
+```
+
+## 10. Logistic Regression
+
+Logistic regression is used for binary classification problems.
+
+```{r}
+logit_model <- glm(am ~ hp + wt, data = mtcars, family = binomial)
+summary(logit_model)
+```
+
+## 11. Data Splitting and Modeling
+
+In real machine learning projects, we typically need to split data into training and test sets.
+
+```{r}
+install.packages("caTools")
+library(caTools)
+
+set.seed(123)
+split <- sample.split(mtcars$mpg, SplitRatio = 0.7)
+train <- subset(mtcars, split == TRUE)
+test <- subset(mtcars, split == FALSE)
+
+train_model <- lm(mpg ~ hp + wt, data = train)
+predictions <- predict(train_model, newdata = test)
+print(predictions)
+```
+
+This example demonstrates how to split data, build a model on the training set, and then make predictions on the test set.
+
+We hope this tutorial helps you get started with data analysis in R! Remember, practice is the best way to learn data analysis, so try modifying these examples and applying them to your own data.
