@@ -1,0 +1,108 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+# R Data Analysis Tutorial for Beginners
+
+This tutorial will guide you through the process of basic data analysis using R. We will use R's built-in datasets `iris` and `mtcars` to demonstrate various data operations and analysis techniques.
+
+## 1. Loading Datasets
+
+First, we need to load the datasets we'll be using. R has many built-in datasets, and we'll use two of them: `iris` and `mtcars`.
+
+```{r}
+data(iris)
+data(mtcars)
+```
+
+These two lines of code will load the `iris` and `mtcars` datasets into our R environment.
+
+## 2. Viewing Basic Dataset Information
+
+Basic data structure, Vector
+
+```{r}
+# numeric
+numeric_vector <- c(1, 2, 3, 4.5)
+integer_vector <- c(1L, 2L, 3L)  # 'L' 表示整数
+
+# character
+char_vector <- c("a", "b", "c")
+
+# logical
+logical_vector <- c(TRUE, FALSE, TRUE)
+
+# complex
+complex_vector <- c(1+2i, 3-4i)
+
+# raw
+raw_vector <- as.raw(c(1, 2, 3))
+
+# factor
+factor_vector <- factor(c("small", "medium", "large"))
+
+# date
+date_vector <- as.Date(c("2023-01-01", "2023-01-02"))
+
+# check type
+sapply(list(numeric_vector, integer_vector, char_vector, logical_vector, 
+            complex_vector, raw_vector, factor_vector, date_vector), class)
+```
+
+Factor looks unfamiliar?
+
+Categorical variable (Ordered & Unordered)
+
+```{r}
+education <- factor(c("High School", "Bachelor", "Master", "PhD","High School"),
+                    levels = c("High School", "Bachelor", "Master", "PhD"),
+                    ordered = TRUE)
+education
+```
+
+With that knowledge, we canBefore start the analysis, we need to understand our datasets. We can use several functions to view the basic structure and statistical information of the data.
+
+```{r}
+# View the first few rows of data
+head(iris)
+head(mtcars)
+
+print("-------- data structure --------")
+# View data structure
+str(iris)
+print("-------- cars --------")
+str(mtcars)
+
+print("-------- data summary --------")
+# View data summary
+summary(iris)
+print("-------- cars --------")
+summary(mtcars)
+```
+
+The `head()` function displays the first few rows of the dataset. The `str()` function shows the structure of the data, including variable types and some sample values. The `summary()` function provides basic statistical information for each variable.
+
+## 3. Basic Operations on Data Frames
+
+Data frames in R are very flexible data structures, allowing us to easily select, modify, and add data.
+
+### Selecting Rows and Columns
+
+```{r}
+# Select the first column of the iris dataset
+print("iris first column")
+iris[, 1] # Here in [,], the first element is the row index, the second is the column index
+
+# Select the mpg column of the mtcars dataset
+print("mt cars mpg")
+mtcars$mpg       
+
+# Select the 1st to 3rd columns of the iris dataset
+iris[, 1:3]      
+
+# Select rows where Species is setosa
+subset(iris, Species == "setosa")   
+
+# Select rows where mpg is greater than 20
+subset(mtcars, mpg > 20)            
