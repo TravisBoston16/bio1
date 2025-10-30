@@ -1,0 +1,80 @@
+```
+
+### Adding New Columns
+
+We can create new columns based on existing ones.
+
+```{r}
+# Add Sepal length-to-width ratio
+iris$Sepal_Ratio <- iris$Sepal.Length / iris$Sepal.Width  
+
+# Add horsepower-to-weight ratio
+mtcars$hp_wt_ratio <- mtcars$hp / mtcars$wt               
+```
+
+## 4. Data Summarization and Aggregation
+
+For EDA.
+
+R provides various methods to calculate basic statistics and summarize data by groups.
+
+### Basic Statistics
+
+```{r}
+mean(iris$Sepal.Length)
+sd(iris$Sepal.Length)
+min(iris$Sepal.Length)
+max(iris$Sepal.Length)
+
+mean(mtcars$mpg)
+median(mtcars$mpg)
+quantile(mtcars$mpg)
+```
+
+### Group Summarization
+
+```{r}
+aggregate(Sepal.Length ~ Species, data = iris, mean)
+aggregate(mpg ~ cyl, data = mtcars, mean)
+```
+
+The `aggregate()` function allows us to group by one variable and then apply a function (like mean) to another variable.
+
+## 5. Conditional Statements and Loops
+
+R supports common programming structures like conditional statements and loops.
+
+### Conditional Statements
+
+```{r}
+iris$Sepal_Long <- ifelse(iris$Sepal.Length > 5, "Yes", "No")
+table(iris$Sepal_Long)
+iris$Sepal_Long
+```
+
+The `ifelse()` function creates a new vector based on a condition.
+
+### Loops
+ 
+```{r}
+for (i in 1:nrow(mtcars)) {
+  total_power <- mtcars$hp[i] * mtcars$wt[i]
+  print(paste("Car", rownames(mtcars)[i], "total power:", total_power))
+}
+```
+
+This loop calculates the "total power" (horsepower multiplied by weight) for each car and prints the result.
+
+## 6. Visualization
+
+Data visualization is an important part of data analysis. R provides powerful visualization tools.
+
+### Basic Plotting
+
+```{r}
+plot(iris$Sepal.Length, iris$Petal.Length, # numeric vector
+     main = "Sepal vs Petal Length",
+     xlab = "Sepal Length", ylab = "Petal Length",
+     col = iris$Species, pch = 19)
+
+boxplot(mpg ~ cyl, data = mtcars, main = "MPG by Cylinder", xlab = "Cylinders", ylab = "MPG")
