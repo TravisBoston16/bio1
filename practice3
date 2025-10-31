@@ -1,0 +1,85 @@
+```
+
+### Using ggplot2
+
+ggplot2 is a popular R plotting package that provides more flexible and aesthetically pleasing graphics.
+
+```{r}
+# Install and load ggplot2
+install.packages("ggplot2")
+library(ggplot2)
+
+# Create a scatter plot
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+  geom_point(size = 3) +
+  labs(title = "Sepal Length vs Petal Length") +
+  theme_minimal()
+
+# Create a scatter plot with grouping
+ggplot(mtcars, aes(x = hp, y = mpg, color = factor(cyl))) +
+  geom_point(size = 3) +
+  labs(title = "MPG vs Horsepower", x = "Horsepower", y = "MPG") +
+  theme_minimal()
+```
+
+## 7. Linear Regression
+
+Linear regression is a common statistical analysis method used to study relationships between variables.
+
+### Simple Linear Regression
+
+```{r}
+model <- lm(mpg ~ hp, data = mtcars)
+summary(model)
+
+# Plot regression line
+plot(mtcars$hp, mtcars$mpg, main = "MPG vs Horsepower with Regression Line", xlab = "Horsepower", ylab = "MPG")
+abline(model, col = "red")
+```
+
+### Multiple Linear Regression
+
+```{r}
+model_multi <- lm(mpg ~ hp + wt, data = mtcars)
+summary(model_multi)
+```
+
+## 8. Data Import and Export
+
+R can easily read and write various data formats.
+
+```{r}
+write.csv(iris, "iris_modified.csv")
+save(iris, mtcars, file = "datasets.RData")
+load("datasets.RData")
+```
+
+## 9. Using dplyr for Data Processing
+
+dplyr is a powerful data manipulation package that provides intuitive syntax.
+
+```{r}
+install.packages("dplyr")
+library(dplyr)
+
+# Select columns
+iris_select <- select(iris, Sepal.Length, Sepal.Width)
+
+# Filter rows
+mtcars_filter <- filter(mtcars, mpg > 20)
+
+# Group summarization
+iris_grouped <- iris %>%
+  group_by(Species) %>%
+  summarise(avg_sepal_length = mean(Sepal.Length))
+
+print(iris_grouped)
+```
+
+## 10. Logistic Regression
+
+Logistic regression is used for binary classification problems.
+
+```{r}
+logit_model <- glm(am ~ hp + wt, data = mtcars, family = binomial)
+summary(logit_model)
