@@ -1,0 +1,21 @@
+## 11. Data Splitting and Modeling
+
+In real machine learning projects, we typically need to split data into training and test sets.
+
+```{r}
+install.packages("caTools")
+library(caTools)
+
+set.seed(123)
+split <- sample.split(mtcars$mpg, SplitRatio = 0.7)
+train <- subset(mtcars, split == TRUE)
+test <- subset(mtcars, split == FALSE)
+
+train_model <- lm(mpg ~ hp + wt, data = train)
+predictions <- predict(train_model, newdata = test)
+print(predictions)
+```
+
+This example demonstrates how to split data, build a model on the training set, and then make predictions on the test set.
+
+We hope this tutorial helps you get started with data analysis in R! Remember, practice is the best way to learn data analysis, so try modifying these examples and applying them to your own data.
