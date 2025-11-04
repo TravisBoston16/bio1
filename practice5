@@ -1,0 +1,107 @@
+
+## Table of Contents
+
+1.  Introduction to Tidyverse
+2.  dplyr: Data Manipulation
+3.  ggplot2: Data Visualization
+4.  tidyr: Data Tidying
+5.  purrr: Functional Programming
+6.  stringr: String Operations
+7.  forcats: Factor Management
+8.  lubridate: Date and Time
+9.  tibble: Modern Data Frames
+10. readr: Data Import
+11. Practical Examples
+
+## 1. Introduction to Tidyverse
+
+The Tidyverse is a coherent ecosystem of R packages designed for data science. These packages share common principles and are designed to work together seamlessly. The core principles include:
+
+-   **Tidy Data**: Each variable is a column, each observation is a row
+-   **Consistency**: All packages share similar design philosophy and grammar
+-   **Pipe-Oriented**: Uses the %\>% operator for chaining operations
+-   **Functional Programming**: Embraces functional programming concepts
+
+Let's start by loading all Tidyverse packages:
+
+```{r}
+library(tidyverse)
+
+# View all installed tidyverse packages
+tidyverse_packages()
+```
+
+## 2. dplyr: Data Manipulation
+
+dplyr is the workhorse of data manipulation in R. It provides a grammar of data manipulation through a set of verbs (functions) that solve the most common data manipulation challenges.
+
+### 2.1 Core Functions (The Five Main Verbs)
+
+#### select(): Column Selection
+
+The select() function is used to choose which columns you want to focus on. It's particularly useful when dealing with datasets with many variables.
+
+```{r}
+# Load sample data
+data(mtcars)
+
+# Basic column selection
+mtcars %>%
+  select(mpg, cyl, wt)  # Select specific columns
+  
+# Advanced selection with helper functions
+mtcars %>%
+  select(
+    starts_with("m"),    # Select columns starting with 'm'
+    ends_with("t"),      # Select columns ending with 't'
+    contains("p")        # Select columns containing 'p'
+  )
+```
+
+#### filter(): Row Selection
+
+filter() allows you to subset rows based on logical conditions. You can combine multiple conditions using & (and) and \| (or).
+
+```{r}
+# Basic filtering
+mtcars %>%
+  filter(mpg > 20, cyl == 6)  # Cars with MPG > 20 AND 6 cylinders
+
+# Complex filtering
+mtcars %>%
+  filter(
+    between(mpg, 15, 25),     # MPG between 15 and 25
+    cyl %in% c(4, 6)          # Cylinder is either 4 or 6
+  )
+```
+
+#### arrange(): Ordering Rows
+
+arrange() orders the rows based on one or more columns. By default, it arranges in ascending order; use desc() for descending order.
+
+```{r}
+# Basic ordering
+mtcars %>%
+  arrange(mpg)               # Sort by MPG (ascending)
+
+# Multiple ordering criteria
+mtcars %>%
+  arrange(desc(mpg), wt)     # First by MPG (descending), then by weight
+```
+
+#### mutate(): Creating New Variables
+
+mutate() adds new columns that are functions of existing columns. It's powerful for creating derived metrics.
+
+```{r}
+# Creating new variables
+mtcars %>%
+  mutate(
+    weight_kg = wt * 453.592,        # Convert weight to kilograms
+    efficiency = mpg / wt,           # Calculate efficiency metric
+    efficiency_category = case_when(  # Create categorical variable
+      efficiency < 8 ~ "low",
+      efficiency < 12 ~ "medium",
+      TRUE ~ "high"
+    )
+  )
