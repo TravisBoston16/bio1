@@ -1,0 +1,563 @@
+
+## Table of Contents
+
+1.  Introduction to Tidyverse
+2.  dplyr: Data Manipulation
+3.  ggplot2: Data Visualization
+4.  tidyr: Data Tidying
+5.  purrr: Functional Programming
+6.  stringr: String Operations
+7.  forcats: Factor Management
+8.  lubridate: Date and Time
+9.  tibble: Modern Data Frames
+10. readr: Data Import
+11. Practical Examples
+
+## 1. Introduction to Tidyverse
+
+The Tidyverse is a coherent ecosystem of R packages designed for data science. These packages share common principles and are designed to work together seamlessly. The core principles include:
+
+-   **Tidy Data**: Each variable is a column, each observation is a row
+-   **Consistency**: All packages share similar design philosophy and grammar
+-   **Pipe-Oriented**: Uses the %\>% operator for chaining operations
+-   **Functional Programming**: Embraces functional programming concepts
+
+Let's start by loading all Tidyverse packages:
+
+```{r}
+library(tidyverse)
+
+# View all installed tidyverse packages
+tidyverse_packages()
+```
+
+## 2. dplyr: Data Manipulation
+
+dplyr is the workhorse of data manipulation in R. It provides a grammar of data manipulation through a set of verbs (functions) that solve the most common data manipulation challenges.
+
+### 2.1 Core Functions (The Five Main Verbs)
+
+#### select(): Column Selection
+
+The select() function is used to choose which columns you want to focus on. It's particularly useful when dealing with datasets with many variables.
+
+```{r}
+# Load sample data
+data(mtcars)
+
+# Basic column selection
+mtcars %>%
+  select(mpg, cyl, wt)  # Select specific columns
+  
+# Advanced selection with helper functions
+mtcars %>%
+  select(
+    starts_with("m"),    # Select columns starting with 'm'
+    ends_with("t"),      # Select columns ending with 't'
+    contains("p")        # Select columns containing 'p'
+  )
+```
+
+#### filter(): Row Selection
+
+filter() allows you to subset rows based on logical conditions. You can combine multiple conditions using & (and) and \| (or).
+
+```{r}
+# Basic filtering
+mtcars %>%
+  filter(mpg > 20, cyl == 6)  # Cars with MPG > 20 AND 6 cylinders
+
+# Complex filtering
+mtcars %>%
+  filter(
+    between(mpg, 15, 25),     # MPG between 15 and 25
+    cyl %in% c(4, 6)          # Cylinder is either 4 or 6
+  )
+```
+
+#### arrange(): Ordering Rows
+
+arrange() orders the rows based on one or more columns. By default, it arranges in ascending order; use desc() for descending order.
+
+```{r}
+# Basic ordering
+mtcars %>%
+  arrange(mpg)               # Sort by MPG (ascending)
+
+# Multiple ordering criteria
+mtcars %>%
+  arrange(desc(mpg), wt)     # First by MPG (descending), then by weight
+```
+
+#### mutate(): Creating New Variables
+
+mutate() adds new columns that are functions of existing columns. It's powerful for creating derived metrics.
+
+```{r}
+# Creating new variables
+mtcars %>%
+  mutate(
+    weight_kg = wt * 453.592,        # Convert weight to kilograms
+    efficiency = mpg / wt,           # Calculate efficiency metric
+    efficiency_category = case_when(  # Create categorical variable
+      efficiency < 8 ~ "low",
+      efficiency < 12 ~ "medium",
+      TRUE ~ "high"
+    )
+  )
+```
+
+#### summarise(): Creating Summaries
+
+summarise() collapses a data frame to a single row (or one row per group when used with group_by).
+
+```{r}
+# Basic summaries
+mtcars %>%
+  summarise(
+    avg_mpg = mean(mpg),            # Average MPG
+    sd_mpg = sd(mpg),               # Standard deviation of MPG
+    n = n(),                        # Number of observations
+    min_mpg = min(mpg),            # Minimum MPG
+    max_mpg = max(mpg)             # Maximum MPG
+  )
+```
+
+### 2.2 Grouping Operations
+
+group_by() is a powerful function that allows you to perform operations on subsets of your data. When combined with summarise() or mutate(), it creates group-level calculations.
+
+```{r}
+# Grouping and summarizing
+mtcars %>%
+  group_by(cyl) %>%                  # Group by number of cylinders
+  summarise(
+    avg_mpg = mean(mpg),            # Average MPG per cylinder group
+    count = n(),                     # Count of cars per cylinder group
+    sd_mpg = sd(mpg)                # Standard deviation of MPG per group
+  ) %>%
+  ungroup()                         # Always ungroup when finished
+
+# Multiple grouping variables
+mtcars %>%
+  group_by(cyl, am) %>%             # Group by cylinders and transmission
+  summarise(
+    avg_mpg = mean(mpg),
+    count = n(),
+    .groups = "drop"                # Automatically ungroup
+  )
+```
+
+### 2.3 Joins
+
+Joins are essential for combining data from different tables. dplyr provides various join functions that handle different scenarios of data combination.
+
+```{r}
+# Sample data
+band_members <- tibble(
+  name = c("John", "Paul", "George", "Ringo"),
+  instrument = c("guitar", "bass", "guitar", "drums")
+)
+
+band_instruments <- tibble(
+  instrument = c("guitar", "bass", "drums", "piano"),
+  n_strings = c(6, 4, 0, 230)
+)
+
+# Different types of joins
+inner_join(band_members, band_instruments)
+left_join(band_members, band_instruments)
+right_join(band_members, band_instruments)
+full_join(band_members, band_instruments)
+semi_join(band_members, band_instruments)
+anti_join(band_members, band_instruments)
+```
+
+## 3. ggplot2: Data Visualization
+
+ggplot2 implements the Grammar of Graphics, a systematic approach to creating visualizations by combining basic elements.
+
+### 3.1 Basic Plots
+
+Every ggplot2 visualization consists of three key components: - Data: The dataset containing the variables - Aesthetics: Mapping of variables to visual properties - Geometries: The actual shapes used to represent the data
+
+```{r}
+# Load dataset
+data(diamonds)
+
+# Scatter plot with multiple aesthetics
+ggplot(diamonds, aes(x = carat, y = price, color = cut)) +
+  geom_point(alpha = 0.5) +
+  labs(title = "Diamond Price vs Carat",
+       subtitle = "By cut quality",
+       x = "Carat Weight",
+       y = "Price (USD)") +
+  theme_minimal()
+
+# Histogram and density plot
+ggplot(diamonds, aes(x = price)) +
+  geom_histogram(aes(y = ..density..), fill = "lightblue") +
+  geom_density(color = "red") +
+  facet_wrap(~cut)
+
+# Box plot with customization
+ggplot(diamonds, aes(x = cut, y = price, fill = cut)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+### 3.2 Advanced ggplot2 Features
+
+```{r}
+# Complex layered plot
+ggplot(diamonds, aes(x = carat, y = price)) +
+  geom_hex(bins = 50) +
+  geom_smooth(method = "lm", color = "red") +
+  scale_fill_viridis_c() +
+  facet_wrap(~cut) +
+  theme_minimal() +
+  labs(title = "Diamond Price vs Carat",
+       subtitle = "Hexbin plot with linear trend",
+       x = "Carat Weight",
+       y = "Price (USD)")
+
+# Custom themes and scales
+ggplot(diamonds, aes(x = cut, fill = clarity)) +
+  geom_bar(position = "dodge") +
+  scale_fill_brewer(palette = "Set3") +
+  coord_flip() +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.text = element_text(size = 12),
+    legend.position = "bottom"
+  )
+```
+
+## 4. tidyr: Data Tidying
+
+tidyr provides tools for creating tidy data, where each variable is a column, each observation is a row, and each type of observational unit is a table.
+
+### 4.1 Reshaping Data
+
+```{r}
+# Sample data
+stocks <- tibble(
+  time = as.Date('2009-01-01') + 0:9,
+  X = rnorm(10, 0, 1),
+  Y = rnorm(10, 0, 2),
+  Z = rnorm(10, 0, 4)
+)
+stocks
+# Longer format
+stocks_long <- stocks %>%
+  pivot_longer(
+    cols = -time,
+    names_to = "stock",
+    values_to = "price"
+  )
+
+stocks_long
+
+# Separate and unite
+tibble(name = c("John_Smith_1990", "Mary_Jones_1985")) %>%
+  separate(name, c("first", "last", "year"), sep = "_") %>%
+  unite("full_name", first, last, sep = " ")
+```
+
+### 4.2 Handling Missing Values
+
+```{r}
+# Sample data with NA
+df <- tibble(
+  x = c(1, 2, NA, 4, 5),
+  y = c(NA, 2, 3, 4, 5),
+  z = c(1, 2, 3, NA, 5)
+)
+
+# Drop NA
+df %>% drop_na()
+
+# Replace NA
+df %>% replace_na(list(x = 0, y = 0, z = 0))
+
+# Fill NA with previous/next value
+df %>% fill(everything(), .direction = "down")
+
+# Complete combinations
+expanded <- df %>%
+  tidyr::expand(
+    x = seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), by = 1),
+    y = seq(min(y, na.rm = TRUE), max(y, na.rm = TRUE), by = 1)
+  )
+
+```
+
+## 5. purrr: Functional Programming
+
+purrr enhances R's functional programming toolkit by providing a complete and consistent set of tools for working with functions and vectors.
+
+### 5.1 Map Functions
+
+```{r}
+# Basic mapping
+numbers <- list(1:3, 4:6, 7:9)
+map(numbers, mean)
+map_dbl(numbers, mean)
+
+# Multiple inputs
+map2_dbl(1:3, 4:6, function(x, y) x + y)
+
+# Nested mapping
+nested_list <- list(
+  a = list(x = 1:3, y = 4:6),
+  b = list(x = 7:9, y = 10:12)
+)
+map(nested_list, ~ map(.x, mean))
+
+# Using formulas
+map_dbl(numbers, ~ mean(.x))
+```
+
+### 5.2 List Operations
+
+```{r}
+# Reduce
+reduce(1:5, `+`)
+
+# Accumulate
+accumulate(1:5, `+`)
+
+# Keep/discard
+keep(1:10, ~ .x %% 2 == 0)
+discard(1:10, ~ .x %% 2 == 0)
+
+# Modify nested elements
+modify_if(numbers, is.numeric, ~ .x * 2)
+```
+
+## 6. stringr: String Operations
+
+stringr provides a cohesive set of functions for string manipulation. All functions begin with 'str\_' and take the string as the first argument.
+
+```{r}
+# Sample strings
+strings <- c("apple", "banana", "cherry", "date")
+
+# Basic string operations
+str_length(strings)
+str_to_upper(strings)
+str_to_lower(strings)
+str_to_title(strings)
+
+# Pattern matching
+str_detect(strings, "a")
+str_count(strings, "a")
+str_subset(strings, "a")
+
+# Extraction and replacement
+str_extract(strings, "[aeiou]")
+str_extract_all(strings, "[aeiou]")
+str_replace(strings, "a", "X")
+str_replace_all(strings, "[aeiou]", "X")
+
+# Padding and trimming
+str_pad(strings, width = 10, side = "both")
+str_trim("  hello  ")
+```
+
+## 7. forcats: Factor Management
+
+forcats provides tools for working with categorical variables (factors) in R.
+
+```{r}
+# Create sample factor
+x <- factor(c("apple", "banana", "apple", "cherry"))
+
+# Reorder levels
+fct_reorder(x, c(2, 1, 2, 3))
+fct_infreq(x)  # by frequency
+fct_rev(x)     # reverse order
+
+# Combine levels
+fct_collapse(x, fruit = c("apple", "banana"))
+
+# Lump together small categories
+fct_lump_prop(x, prop = 0.3)
+```
+
+## 8. lubridate: Date and Time
+
+lubridate simplifies working with dates and times in R.
+
+```{r}
+# Create dates
+ymd("2021-01-31")
+mdy("01/31/2021")
+dmy("31-01-2021")
+
+# Extract components
+today <- today()
+year(today)
+month(today)
+day(today)
+wday(today, label = TRUE)
+
+# Arithmetic with dates
+today + days(1)
+today + months(1)
+today + years(1)
+
+# Intervals and durations
+interval(today, today + days(30))
+duration(30, "days")
+```
+
+## 9. tibble: Modern Data Frames
+
+tibble provides a modern reimagining of the data frame, keeping what time has proven to be effective, and throwing out what hasn't.
+
+```{r}
+# Create tibble
+tb <- tibble(
+  x = 1:5,
+  y = letters[1:5],
+  z = x ^ 2
+)
+
+# Tribble for row-wise creation
+tribble(
+  ~x, ~y,  ~z,
+   1, "a", "one",
+   2, "b", "two"
+)
+
+# Printing options
+print(tb, n = 2)
+glimpse(tb)
+```
+
+## 10. readr: Data Import/Export
+
+readr provides fast and friendly ways to read rectangular data.
+
+```{r}
+# Write CSV
+#write_csv(mtcars, "mtcars.csv")
+
+# Read CSV with options
+#read_csv("mtcars.csv",
+ # col_types = cols(
+  #  mpg = col_double(),
+   # cyl = col_factor()
+  #)
+#)
+
+# Read delimited files
+#read_delim("data.txt", delim = "|")
+#read_tsv("data.tsv")
+```
+
+## 11. Practical Examples
+
+### 11.1 Complex Data Analysis
+
+```{r}
+# Comprehensive analysis of diamonds dataset
+diamonds %>%
+  # Data preparation
+  select(cut, color, clarity, depth, price, carat) %>%
+  filter(price < quantile(price, 0.99)) %>%
+  # Create new metrics
+  mutate(
+    price_per_carat = price / carat,
+    depth_category = case_when(
+      depth < 58 ~ "shallow",
+      depth > 64 ~ "deep",
+      TRUE ~ "ideal"
+    )
+  ) %>%
+  # Group analysis
+  group_by(cut, depth_category) %>%
+  summarise(
+    avg_price = mean(price),
+    med_price = median(price),
+    n = n(),
+    .groups = "drop"
+  ) %>%
+  # Arrange results
+  arrange(desc(avg_price))
+```
+
+### 11.2 Advanced Visualization
+
+```{r}
+# Complex multi-layer plot
+diamonds %>%
+  ggplot(aes(x = carat, y = price)) +
+  # Add points
+  geom_point(aes(color = cut), alpha = 0.5) +
+  # Add smoothing
+  geom_smooth(method = "lm") +
+  # Scale transformations
+  scale_x_log10() +
+  scale_y_log10() +
+  # Faceting
+  facet_wrap(~clarity) +
+  # Custom theme
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor = element_blank(),
+    strip.background = element_rect(fill = "lightgray")
+  ) +
+  # Labels
+  labs(
+    title = "Diamond Price vs Carat Weight",
+    subtitle = "By clarity rating",
+    x = "Carat (log scale)",
+    y = "Price (log scale)",
+    color = "Cut Quality"
+  )
+```
+
+### 11.3 String and Factor Processing
+
+```{r}
+# Complex text processing with factors
+tibble(
+  text = c("apple_123", "banana_456", "cherry_789", "date_101")
+) %>%
+  # Split text
+  separate(text, c("fruit", "number"), sep = "_") %>%
+  # Process strings
+  mutate(
+    fruit = str_to_title(fruit),
+    number = as.numeric(number),
+    size = case_when(
+      number < 200 ~ "small",
+      number < 500 ~ "medium",
+      TRUE ~ "large"
+    )
+  ) %>%
+  # Convert to factor and reorder
+  mutate(
+    size = factor(size, levels = c("small", "medium", "large")),
+    fruit = fct_reorder(fruit, number)
+  )
+```
+
+## Best Practices and Tips
+
+1.  Always start with data exploration using `glimpse()` and `summary()`
+2.  Use meaningful variable names
+3.  Chain operations with the pipe operator `%>%`
+4.  Document your code with comments
+5.  Break complex operations into smaller steps
+6.  Use appropriate data types (factors for categories, dates for timestamps)
+7.  Handle missing values explicitly
+8.  Create reusable functions for common operations
+9.  Use appropriate visualization for your data type
+10. Remember to ungroup after group operations when needed
