@@ -1,0 +1,101 @@
+```
+
+#### summarise(): Creating Summaries
+
+summarise() collapses a data frame to a single row (or one row per group when used with group_by).
+
+```{r}
+# Basic summaries
+mtcars %>%
+  summarise(
+    avg_mpg = mean(mpg),            # Average MPG
+    sd_mpg = sd(mpg),               # Standard deviation of MPG
+    n = n(),                        # Number of observations
+    min_mpg = min(mpg),            # Minimum MPG
+    max_mpg = max(mpg)             # Maximum MPG
+  )
+```
+
+### 2.2 Grouping Operations
+
+group_by() is a powerful function that allows you to perform operations on subsets of your data. When combined with summarise() or mutate(), it creates group-level calculations.
+
+```{r}
+# Grouping and summarizing
+mtcars %>%
+  group_by(cyl) %>%                  # Group by number of cylinders
+  summarise(
+    avg_mpg = mean(mpg),            # Average MPG per cylinder group
+    count = n(),                     # Count of cars per cylinder group
+    sd_mpg = sd(mpg)                # Standard deviation of MPG per group
+  ) %>%
+  ungroup()                         # Always ungroup when finished
+
+# Multiple grouping variables
+mtcars %>%
+  group_by(cyl, am) %>%             # Group by cylinders and transmission
+  summarise(
+    avg_mpg = mean(mpg),
+    count = n(),
+    .groups = "drop"                # Automatically ungroup
+  )
+```
+
+### 2.3 Joins
+
+Joins are essential for combining data from different tables. dplyr provides various join functions that handle different scenarios of data combination.
+
+```{r}
+# Sample data
+band_members <- tibble(
+  name = c("John", "Paul", "George", "Ringo"),
+  instrument = c("guitar", "bass", "guitar", "drums")
+)
+
+band_instruments <- tibble(
+  instrument = c("guitar", "bass", "drums", "piano"),
+  n_strings = c(6, 4, 0, 230)
+)
+
+# Different types of joins
+inner_join(band_members, band_instruments)
+left_join(band_members, band_instruments)
+right_join(band_members, band_instruments)
+full_join(band_members, band_instruments)
+semi_join(band_members, band_instruments)
+anti_join(band_members, band_instruments)
+```
+
+## 3. ggplot2: Data Visualization
+
+ggplot2 implements the Grammar of Graphics, a systematic approach to creating visualizations by combining basic elements.
+
+### 3.1 Basic Plots
+
+Every ggplot2 visualization consists of three key components: - Data: The dataset containing the variables - Aesthetics: Mapping of variables to visual properties - Geometries: The actual shapes used to represent the data
+
+```{r}
+# Load dataset
+data(diamonds)
+
+# Scatter plot with multiple aesthetics
+ggplot(diamonds, aes(x = carat, y = price, color = cut)) +
+  geom_point(alpha = 0.5) +
+  labs(title = "Diamond Price vs Carat",
+       subtitle = "By cut quality",
+       x = "Carat Weight",
+       y = "Price (USD)") +
+  theme_minimal()
+
+# Histogram and density plot
+ggplot(diamonds, aes(x = price)) +
+  geom_histogram(aes(y = ..density..), fill = "lightblue") +
+  geom_density(color = "red") +
+  facet_wrap(~cut)
+
+# Box plot with customization
+ggplot(diamonds, aes(x = cut, y = price, fill = cut)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  theme_minimal() +
+  theme(legend.position = "none")
