@@ -1,0 +1,185 @@
+```
+
+### 3.2 Advanced ggplot2 Features
+
+```{r}
+# Complex layered plot
+ggplot(diamonds, aes(x = carat, y = price)) +
+  geom_hex(bins = 50) +
+  geom_smooth(method = "lm", color = "red") +
+  scale_fill_viridis_c() +
+  facet_wrap(~cut) +
+  theme_minimal() +
+  labs(title = "Diamond Price vs Carat",
+       subtitle = "Hexbin plot with linear trend",
+       x = "Carat Weight",
+       y = "Price (USD)")
+
+# Custom themes and scales
+ggplot(diamonds, aes(x = cut, fill = clarity)) +
+  geom_bar(position = "dodge") +
+  scale_fill_brewer(palette = "Set3") +
+  coord_flip() +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.text = element_text(size = 12),
+    legend.position = "bottom"
+  )
+```
+
+## 4. tidyr: Data Tidying
+
+tidyr provides tools for creating tidy data, where each variable is a column, each observation is a row, and each type of observational unit is a table.
+
+### 4.1 Reshaping Data
+
+```{r}
+# Sample data
+stocks <- tibble(
+  time = as.Date('2009-01-01') + 0:9,
+  X = rnorm(10, 0, 1),
+  Y = rnorm(10, 0, 2),
+  Z = rnorm(10, 0, 4)
+)
+stocks
+# Longer format
+stocks_long <- stocks %>%
+  pivot_longer(
+    cols = -time,
+    names_to = "stock",
+    values_to = "price"
+  )
+
+stocks_long
+
+# Separate and unite
+tibble(name = c("John_Smith_1990", "Mary_Jones_1985")) %>%
+  separate(name, c("first", "last", "year"), sep = "_") %>%
+  unite("full_name", first, last, sep = " ")
+```
+
+### 4.2 Handling Missing Values
+
+```{r}
+# Sample data with NA
+df <- tibble(
+  x = c(1, 2, NA, 4, 5),
+  y = c(NA, 2, 3, 4, 5),
+  z = c(1, 2, 3, NA, 5)
+)
+
+# Drop NA
+df %>% drop_na()
+
+# Replace NA
+df %>% replace_na(list(x = 0, y = 0, z = 0))
+
+# Fill NA with previous/next value
+df %>% fill(everything(), .direction = "down")
+
+# Complete combinations
+expanded <- df %>%
+  tidyr::expand(
+    x = seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), by = 1),
+    y = seq(min(y, na.rm = TRUE), max(y, na.rm = TRUE), by = 1)
+  )
+
+```
+
+## 5. purrr: Functional Programming
+
+purrr enhances R's functional programming toolkit by providing a complete and consistent set of tools for working with functions and vectors.
+
+### 5.1 Map Functions
+
+```{r}
+# Basic mapping
+numbers <- list(1:3, 4:6, 7:9)
+map(numbers, mean)
+map_dbl(numbers, mean)
+
+# Multiple inputs
+map2_dbl(1:3, 4:6, function(x, y) x + y)
+
+# Nested mapping
+nested_list <- list(
+  a = list(x = 1:3, y = 4:6),
+  b = list(x = 7:9, y = 10:12)
+)
+map(nested_list, ~ map(.x, mean))
+
+# Using formulas
+map_dbl(numbers, ~ mean(.x))
+```
+
+### 5.2 List Operations
+
+```{r}
+# Reduce
+reduce(1:5, `+`)
+
+# Accumulate
+accumulate(1:5, `+`)
+
+# Keep/discard
+keep(1:10, ~ .x %% 2 == 0)
+discard(1:10, ~ .x %% 2 == 0)
+
+# Modify nested elements
+modify_if(numbers, is.numeric, ~ .x * 2)
+```
+
+## 6. stringr: String Operations
+
+stringr provides a cohesive set of functions for string manipulation. All functions begin with 'str\_' and take the string as the first argument.
+
+```{r}
+# Sample strings
+strings <- c("apple", "banana", "cherry", "date")
+
+# Basic string operations
+str_length(strings)
+str_to_upper(strings)
+str_to_lower(strings)
+str_to_title(strings)
+
+# Pattern matching
+str_detect(strings, "a")
+str_count(strings, "a")
+str_subset(strings, "a")
+
+# Extraction and replacement
+str_extract(strings, "[aeiou]")
+str_extract_all(strings, "[aeiou]")
+str_replace(strings, "a", "X")
+str_replace_all(strings, "[aeiou]", "X")
+
+# Padding and trimming
+str_pad(strings, width = 10, side = "both")
+str_trim("  hello  ")
+```
+
+## 7. forcats: Factor Management
+
+forcats provides tools for working with categorical variables (factors) in R.
+
+```{r}
+# Create sample factor
+x <- factor(c("apple", "banana", "apple", "cherry"))
+
+# Reorder levels
+fct_reorder(x, c(2, 1, 2, 3))
+fct_infreq(x)  # by frequency
+fct_rev(x)     # reverse order
+
+# Combine levels
+fct_collapse(x, fruit = c("apple", "banana"))
+
+# Lump together small categories
+fct_lump_prop(x, prop = 0.3)
+```
+
+## 8. lubridate: Date and Time
+
+lubridate simplifies working with dates and times in R.
