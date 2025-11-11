@@ -1,0 +1,148 @@
+```
+
+## 9. tibble: Modern Data Frames
+
+tibble provides a modern reimagining of the data frame, keeping what time has proven to be effective, and throwing out what hasn't.
+
+```{r}
+# Create tibble
+tb <- tibble(
+  x = 1:5,
+  y = letters[1:5],
+  z = x ^ 2
+)
+
+# Tribble for row-wise creation
+tribble(
+  ~x, ~y,  ~z,
+   1, "a", "one",
+   2, "b", "two"
+)
+
+# Printing options
+print(tb, n = 2)
+glimpse(tb)
+```
+
+## 10. readr: Data Import/Export
+
+readr provides fast and friendly ways to read rectangular data.
+
+```{r}
+# Write CSV
+#write_csv(mtcars, "mtcars.csv")
+
+# Read CSV with options
+#read_csv("mtcars.csv",
+ # col_types = cols(
+  #  mpg = col_double(),
+   # cyl = col_factor()
+  #)
+#)
+
+# Read delimited files
+#read_delim("data.txt", delim = "|")
+#read_tsv("data.tsv")
+```
+
+## 11. Practical Examples
+
+### 11.1 Complex Data Analysis
+
+```{r}
+# Comprehensive analysis of diamonds dataset
+diamonds %>%
+  # Data preparation
+  select(cut, color, clarity, depth, price, carat) %>%
+  filter(price < quantile(price, 0.99)) %>%
+  # Create new metrics
+  mutate(
+    price_per_carat = price / carat,
+    depth_category = case_when(
+      depth < 58 ~ "shallow",
+      depth > 64 ~ "deep",
+      TRUE ~ "ideal"
+    )
+  ) %>%
+  # Group analysis
+  group_by(cut, depth_category) %>%
+  summarise(
+    avg_price = mean(price),
+    med_price = median(price),
+    n = n(),
+    .groups = "drop"
+  ) %>%
+  # Arrange results
+  arrange(desc(avg_price))
+```
+
+### 11.2 Advanced Visualization
+
+```{r}
+# Complex multi-layer plot
+diamonds %>%
+  ggplot(aes(x = carat, y = price)) +
+  # Add points
+  geom_point(aes(color = cut), alpha = 0.5) +
+  # Add smoothing
+  geom_smooth(method = "lm") +
+  # Scale transformations
+  scale_x_log10() +
+  scale_y_log10() +
+  # Faceting
+  facet_wrap(~clarity) +
+  # Custom theme
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    panel.grid.minor = element_blank(),
+    strip.background = element_rect(fill = "lightgray")
+  ) +
+  # Labels
+  labs(
+    title = "Diamond Price vs Carat Weight",
+    subtitle = "By clarity rating",
+    x = "Carat (log scale)",
+    y = "Price (log scale)",
+    color = "Cut Quality"
+  )
+```
+
+### 11.3 String and Factor Processing
+
+```{r}
+# Complex text processing with factors
+tibble(
+  text = c("apple_123", "banana_456", "cherry_789", "date_101")
+) %>%
+  # Split text
+  separate(text, c("fruit", "number"), sep = "_") %>%
+  # Process strings
+  mutate(
+    fruit = str_to_title(fruit),
+    number = as.numeric(number),
+    size = case_when(
+      number < 200 ~ "small",
+      number < 500 ~ "medium",
+      TRUE ~ "large"
+    )
+  ) %>%
+  # Convert to factor and reorder
+  mutate(
+    size = factor(size, levels = c("small", "medium", "large")),
+    fruit = fct_reorder(fruit, number)
+  )
+```
+
+## Best Practices and Tips
+
+1.  Always start with data exploration using `glimpse()` and `summary()`
+2.  Use meaningful variable names
+3.  Chain operations with the pipe operator `%>%`
+4.  Document your code with comments
+5.  Break complex operations into smaller steps
+6.  Use appropriate data types (factors for categories, dates for timestamps)
+7.  Handle missing values explicitly
+8.  Create reusable functions for common operations
+9.  Use appropriate visualization for your data type
+10. Remember to ungroup after group operations when needed
