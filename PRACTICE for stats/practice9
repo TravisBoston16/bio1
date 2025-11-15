@@ -1,0 +1,209 @@
+#Load the dataset
+data(mtcars)
+
+# 2. T-TEST: COMPARING TWO GROUPS
+# Research Question: Do automatic and manual transmission cars have different MPG?
+# 0 = automatic, 1 = manual
+table(mtcars$am)  
+# Check mean MPG for each group
+tapply(mtcars$mpg, mtcars$am, mean) 
+
+# Independent samples t-test
+# Compare mpg between automatic (am=0) and manual (am=1) transmission cars
+t_test_result <- t.test(mpg ~ am, data = mtcars)
+print(t_test_result)
+
+# One-sample t-test: Is average MPG different from 20?
+t_test_one_sample <- t.test(mtcars$mpg, mu = 20)
+print(t_test_one_sample)
+
+
+# 3. ONE-WAY ANOVA: COMPARING THREE OR MORE GROUPS
+# Research Question: Do different cylinder types (4, 6, 8) have different MPG?
+# Check mean MPG by cylinder count
+tapply(mtcars$mpg, mtcars$cyl, mean) 
+
+# One-way ANOVA: Testing if mean MPG differs across cylinder groups
+anova_result <- aov(mpg ~ cyl, data = mtcars)
+summary(anova_result)
+
+# 4. PEARSON CORRELATION: LINEAR RELATIONSHIP BETWEEN TWO CONTINUOUS VARIABLES
+# Is there a linear relationship between weight and MPG?
+
+# Scatter plot to visualize relationship
+plot(mtcars$wt, mtcars$mpg, 
+     main = "Weight vs MPG",
+     xlab = "Weight (1000 lbs)",
+     ylab = "Miles per Gallon",
+     pch = 16, col = "blue")
+
+# Pearson correlation test
+pearson_result <- cor.test(mtcars$wt, mtcars$mpg, 
+                           method = "pearson")
+
+print(pearson_result)
+
+
+# Just get correlation coefficient without test
+cor(mtcars$wt, mtcars$mpg, method = "pearson")
+
+# 5. SPEARMAN CORRELATION: MONOTONIC RELATIONSHIP (NON-PARAMETRIC)
+# Research Question: Is there a monotonic relationship between horsepower and MPG?
+# Scatter plot
+plot(mtcars$hp, mtcars$mpg,
+     main = "Horsepower vs MPG",
+     xlab = "Horsepower",
+     ylab = "Miles per Gallon",
+     pch = 16, col = "red")
+
+# Spearman correlation test (rank-based, doesn't assume linearity)
+spearman_result <- cor.test(mtcars$hp, mtcars$mpg,
+                            method = "spearman")
+
+print(spearman_result)
+
+# Create correlation matrix for multiple variables
+correlation_matrix <- cor(mtcars[, c("mpg", "wt", "hp", "disp")])
+print(correlation_matrix)
+
+# Visualize with corrplot package (if installed)
+# install.packages("corrplot")  # Run if not installed
+library(corrplot)
+corrplot(correlation_matrix, method = "circle")
+
+
+library(MASS)      # Contains Boston dataset
+data(Boston)
+summary(Boston)
+
+# 6. DATA VISUALIZATION - EXPLORE RELATIONSHIPS
+# Scatter plot: Rooms vs Price
+ggplot(Boston, aes(x = rm, y = medv)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  labs(title = "Relationship: Rooms vs House Price",
+       x = "Average Rooms per Dwelling",
+       y = "Median House Value ($1000s)")
+
+# Scatter plot: Crime vs Price
+ggplot(Boston, aes(x = crim, y = medv)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Relationship: Crime Rate vs House Price",
+       x = "Per Capita Crime Rate",
+       y = "Median House Value ($1000s)")
+
+# Create crime rate categories for visualization
+Boston <- Boston %>%
+  mutate(crime_category = case_when(
+    crim < 1 ~ "Low Crime",
+    crim >= 1 & crim < 5 ~ "Medium Crime", 
+    crim >= 5 ~ "High Crime"
+  ))
+
+# Plot showing interaction visually
+ggplot(Boston, aes(x = rm, y = medv, color = crime_category)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Rooms vs Price by Crime Level (Interaction Visualization)",
+       x = "Average Rooms per Dwelling",
+       y = "Median House Value ($1000s)",
+       color = "Crime Level") +
+  theme_minimal()
+
+# 7. SIMPLE LINEAR REGRESSION (NO INTERACTION)
+# Model 1: Only main effects (no interaction)
+model_simple <- lm(medv ~ rm + crim, data = Boston)
+
+# Display results
+summary(model_simple)
+
+# Get coefficient estimates and 95% Confidence Intervals
+confint_simple <- confint(model_simple, level = 0.95)
+print(confint_simple)
+
+
+# Model 2: With interaction between rooms and crime rate
+# The '*' operator automatically includes main effects AND interaction
+model_interaction <- lm(medv ~ rm * crim, data = Boston)
+summary(model_interaction)
+
+# Manual calculation of 95%CI
+
+# Get coefficient estimates
+coefficients <- coef(model_interaction)
+print(coefficients)
+
+# Get standard errors
+std_errors <- summary(model_interaction)$coefficients[, "Std. Error"]
+print(std_errors)
+
+# Get degrees of freedom
+df_residual <- df.residual(model_interaction)
+
+# Get critical t-value for 95% CI (two-tailed)
+t_critical <- qt(0.975, df = df_residual)
+
+# Calculate confidence intervals manually
+CI_lower <- coefficients - t_critical * std_errors
+CI_upper <- coefficients + t_critical * std_errors
+
+manual_CI <- cbind(CI_lower, CI_upper)
+colnames(manual_CI) <- c("2.5 %", "97.5 %")
+print(manual_CI)
+
+
+# 8. Compare models with and without interaction USING LRT
+anova_result <- anova(model_simple, model_interaction)
+print(anova_result)
+
+cat("\nInterpretation:\n")
+if(anova_result$`Pr(>F)`[2] < 0.05) {
+  cat("The interaction term significantly improves the model (p < 0.05)\n")
+  cat("We should keep the interaction in the model.\n")
+} else {
+  cat("The interaction term does not significantly improve the model (p >= 0.05)\n")
+  cat("We might prefer the simpler model without interaction.\n")
+}
+
+#9.Normality test
+model <- lm(medv ~ rm + crim + ptratio, data = Boston)
+residuals <- resid(model)
+par(mfrow = c(1, 2))  # Set up 1x2 plotting area
+# Plot 1: Basic QQ-plot
+qqnorm(residuals, 
+       main = "Basic QQ-Plot: Residuals Normality Check",
+       pch = 16, col = "blue", cex = 0.8)
+qqline(residuals, col = "red", lwd = 2)
+plot_data <- data.frame(Residuals = residuals)
+
+# Enhanced QQ-plot with ggplot2
+ggplot(plot_data, aes(sample = Residuals)) +
+  stat_qq(size = 2, alpha = 0.6, color = "blue") +
+  stat_qq_line(color = "red", linewidth = 1) +
+  labs(title = "Enhanced QQ-Plot: Normality Check of Residuals",
+       subtitle = "Boston Housing Regression Model",
+       x = "Theoretical Quantiles (Normal Distribution)",
+       y = "Sample Quantiles (Residuals)") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold"))
+
+par(mfrow = c(2, 2))
+# 1. Our actual residuals
+qqnorm(residuals, main = "Our Model: Slightly Heavy Tails", pch = 16)
+qqline(residuals, col = "red")
+
+# 2. Perfect normal data for comparison
+perfect_normal <- rnorm(500)
+qqnorm(perfect_normal, main = "Perfect Normal Data", pch = 16)
+qqline(perfect_normal, col = "red")
+
+# 3. Right-skewed data
+right_skewed <- rgamma(500, shape = 2)
+qqnorm(right_skewed, main = "Right-Skewed Data", pch = 16)
+qqline(right_skewed, col = "red")
+
+# 4. Heavy-tailed data
+heavy_tailed <- rt(500, df = 3)
+qqnorm(heavy_tailed, main = "Heavy-Tailed Data", pch = 16)
+qqline(heavy_tailed, col = "red")
