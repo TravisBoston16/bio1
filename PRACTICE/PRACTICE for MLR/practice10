@@ -87,3 +87,4 @@ model_with_interaction <- lm(medv ~ rm * crim, data = Boston)
 
 anova_test <- anova(model_no_interaction, model_with_interaction)
 print(anova_test)
+
