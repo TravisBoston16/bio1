@@ -1,0 +1,11 @@
+# 使用清华大学的镜像
+options(BioC_mirror="https://mirrors.tuna.tsinghua.edu.cn/bioconductor")
+
+# 使用南京大学的镜像
+options(BioC_mirror="https://mirrors.nju.edu.cn/bioconductor/")
+
+# 使用中国科学技术大学的镜像
+options(BioC_mirror="https://mirrors.ustc.edu.cn/bioc/")
+
+# 使用西湖大学的镜像
+options(BioC_mirror="https://mirrors.westlake.edu.cn/bioconductor")
