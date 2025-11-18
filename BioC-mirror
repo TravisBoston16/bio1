@@ -9,3 +9,9 @@ options(BioC_mirror="https://mirrors.ustc.edu.cn/bioc/")
 
 # 使用西湖大学的镜像
 options(BioC_mirror="https://mirrors.westlake.edu.cn/bioconductor")
+
+
+
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install(version = "3.22")
