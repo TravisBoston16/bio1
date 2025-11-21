@@ -144,3 +144,304 @@ list.files(pattern = "qmd$") # 涉及正则表达式
 ## [15] "15-tidyverse简介.qmd"         "16-完结篇.qmd"               
 ## [17] "9999-appendix.qmd"            "index.qmd"
 
+install.packages("readxl")
+library(readxl)
+
+# col_names = TRUE 表示这个文件是有列名的
+brca_clin <- read_xlsx("E:/brca_clin.xlsx", col_names = TRUE)
+
+Error: `path` does not exist: ‘E:/brca_clin.xlsx’
+
+# 读取
+brca_clin <- read_xlsx("F:/R_books/r4beginners_base_r/brca_clin.xlsx", 
+                       col_names = T)
+
+brca_clin[1:5,2:5] # 查看第1-5行，第2-5列
+## # A tibble: 5 × 4
+##   patient      sample           sample_type         initial_weight
+##   <chr>        <chr>            <chr>                        <dbl>
+## 1 TCGA-BH-A1FC TCGA-BH-A1FC-11A Solid Tissue Normal            260
+## 2 TCGA-AC-A2FM TCGA-AC-A2FM-11B Solid Tissue Normal            220
+## 3 TCGA-BH-A0DO TCGA-BH-A0DO-11A Solid Tissue Normal            130
+## 4 TCGA-E2-A1BC TCGA-E2-A1BC-11A Solid Tissue Normal            260
+## 5 TCGA-BH-A0BJ TCGA-BH-A0BJ-11A Solid Tissue Normal            200
+
+# 因为在同一路径下，所以可以直接写名字
+brca_clin <- read_xlsx("brca_clin.xlsx", col_names = T)
+
+# 或者
+brca_clin <- read_xlsx("./brca_clin.xlsx", col_names = T)
+
+brca_expr_不要删 <- read_xlsx("../brca_expr_不要删.xlsx", col_names = T)
+
+# read.csv是R自带的函数，不用加载R包；header = T 表示这个文件有列名
+csv <- read.csv("datasets/brca_clin.csv", header = T)
+
+csv
+##                         barcode      patient           sample
+## 1  TCGA-BH-A1FC-11A-32R-A13Q-07 TCGA-BH-A1FC TCGA-BH-A1FC-11A
+## 2  TCGA-AC-A2FM-11B-32R-A19W-07 TCGA-AC-A2FM TCGA-AC-A2FM-11B
+## 3  TCGA-BH-A0DO-11A-22R-A12D-07 TCGA-BH-A0DO TCGA-BH-A0DO-11A
+## 4  TCGA-E2-A1BC-11A-32R-A12P-07 TCGA-E2-A1BC TCGA-E2-A1BC-11A
+## 5  TCGA-BH-A0BJ-11A-23R-A089-07 TCGA-BH-A0BJ TCGA-BH-A0BJ-11A
+## 6  TCGA-E2-A1LH-11A-22R-A14D-07 TCGA-E2-A1LH TCGA-E2-A1LH-11A
+## 7  TCGA-BH-A1FB-11A-33R-A13Q-07 TCGA-BH-A1FB TCGA-BH-A1FB-11A
+## 8  TCGA-BH-A18M-11A-33R-A12D-07 TCGA-BH-A18M TCGA-BH-A18M-11A
+## 9  TCGA-BH-A0BM-11A-12R-A089-07 TCGA-BH-A0BM TCGA-BH-A0BM-11A
+## 10 TCGA-E2-A153-11A-31R-A12D-07 TCGA-E2-A153 TCGA-E2-A153-11A
+## 11 TCGA-B6-A0RH-01A-21R-A115-07 TCGA-B6-A0RH TCGA-B6-A0RH-01A
+## 12 TCGA-BH-A1FU-01A-11R-A14D-07 TCGA-BH-A1FU TCGA-BH-A1FU-01A
+## 13 TCGA-AR-A0TX-01A-11R-A084-07 TCGA-AR-A0TX TCGA-AR-A0TX-01A
+## 14 TCGA-A1-A0SE-01A-11R-A084-07 TCGA-A1-A0SE TCGA-A1-A0SE-01A
+## 15 TCGA-OL-A5D6-01A-21R-A27Q-07 TCGA-OL-A5D6 TCGA-OL-A5D6-01A
+## 16 TCGA-E2-A1IK-01A-11R-A144-07 TCGA-E2-A1IK TCGA-E2-A1IK-01A
+## 17 TCGA-AN-A0FT-01A-11R-A034-07 TCGA-AN-A0FT TCGA-AN-A0FT-01A
+## 18 TCGA-A2-A3KD-01A-12R-A213-07 TCGA-A2-A3KD TCGA-A2-A3KD-01A
+## 19 TCGA-A2-A0EO-01A-11R-A034-07 TCGA-A2-A0EO TCGA-A2-A0EO-01A
+## 20 TCGA-A2-A04P-01A-31R-A034-07 TCGA-A2-A04P TCGA-A2-A04P-01A
+##            sample_type initial_weight ajcc_pathologic_stage
+## 1  Solid Tissue Normal            260             Stage IIA
+## 2  Solid Tissue Normal            220             Stage IIB
+## 3  Solid Tissue Normal            130               Stage I
+## 4  Solid Tissue Normal            260              Stage IA
+## 5  Solid Tissue Normal            200             Stage IIB
+## 6  Solid Tissue Normal             60               Stage I
+## 7  Solid Tissue Normal            320             Stage IIB
+## 8  Solid Tissue Normal            310            Stage IIIA
+## 9  Solid Tissue Normal            100             Stage IIB
+## 10 Solid Tissue Normal            250             Stage IIB
+## 11       Primary Tumor            130             Stage IIA
+## 12       Primary Tumor            110              Stage IA
+## 13       Primary Tumor            470             Stage IIA
+## 14       Primary Tumor             90               Stage I
+## 15       Primary Tumor            200             Stage IIA
+## 16       Primary Tumor             70             Stage IIA
+## 17       Primary Tumor            130             Stage IIB
+## 18       Primary Tumor            770            Stage IIIA
+## 19       Primary Tumor            200              Stage IA
+## 20       Primary Tumor            250            Stage IIIC
+##    days_to_last_follow_up gender age_at_index
+## 1                      NA female           78
+## 2                      NA female           87
+## 3                    1644 female           78
+## 4                     501 female           63
+## 5                     660 female           41
+## 6                    3247 female           59
+## 7                      NA female           60
+## 8                      NA female           39
+## 9                    1876 female           54
+## 10                    707 female           51
+## 11                   5749 female           51
+## 12                     NA female           44
+## 13                   1972 female           64
+## 14                   1321 female           56
+## 15                    385 female           71
+## 16                   1800 female           71
+## 17                    214 female           63
+## 18                   1206 female           47
+## 19                   2442 female           54
+## 20                     NA female           36
+
+csv <- read.table("datasets/brca_clin.csv", header = T,
+                  sep = "," # 指定分隔符！
+                  )
+
+csv
+##                         barcode      patient           sample
+## 1  TCGA-BH-A1FC-11A-32R-A13Q-07 TCGA-BH-A1FC TCGA-BH-A1FC-11A
+## 2  TCGA-AC-A2FM-11B-32R-A19W-07 TCGA-AC-A2FM TCGA-AC-A2FM-11B
+## 3  TCGA-BH-A0DO-11A-22R-A12D-07 TCGA-BH-A0DO TCGA-BH-A0DO-11A
+## 4  TCGA-E2-A1BC-11A-32R-A12P-07 TCGA-E2-A1BC TCGA-E2-A1BC-11A
+## 5  TCGA-BH-A0BJ-11A-23R-A089-07 TCGA-BH-A0BJ TCGA-BH-A0BJ-11A
+## 6  TCGA-E2-A1LH-11A-22R-A14D-07 TCGA-E2-A1LH TCGA-E2-A1LH-11A
+## 7  TCGA-BH-A1FB-11A-33R-A13Q-07 TCGA-BH-A1FB TCGA-BH-A1FB-11A
+## 8  TCGA-BH-A18M-11A-33R-A12D-07 TCGA-BH-A18M TCGA-BH-A18M-11A
+## 9  TCGA-BH-A0BM-11A-12R-A089-07 TCGA-BH-A0BM TCGA-BH-A0BM-11A
+## 10 TCGA-E2-A153-11A-31R-A12D-07 TCGA-E2-A153 TCGA-E2-A153-11A
+## 11 TCGA-B6-A0RH-01A-21R-A115-07 TCGA-B6-A0RH TCGA-B6-A0RH-01A
+## 12 TCGA-BH-A1FU-01A-11R-A14D-07 TCGA-BH-A1FU TCGA-BH-A1FU-01A
+## 13 TCGA-AR-A0TX-01A-11R-A084-07 TCGA-AR-A0TX TCGA-AR-A0TX-01A
+## 14 TCGA-A1-A0SE-01A-11R-A084-07 TCGA-A1-A0SE TCGA-A1-A0SE-01A
+## 15 TCGA-OL-A5D6-01A-21R-A27Q-07 TCGA-OL-A5D6 TCGA-OL-A5D6-01A
+## 16 TCGA-E2-A1IK-01A-11R-A144-07 TCGA-E2-A1IK TCGA-E2-A1IK-01A
+## 17 TCGA-AN-A0FT-01A-11R-A034-07 TCGA-AN-A0FT TCGA-AN-A0FT-01A
+## 18 TCGA-A2-A3KD-01A-12R-A213-07 TCGA-A2-A3KD TCGA-A2-A3KD-01A
+## 19 TCGA-A2-A0EO-01A-11R-A034-07 TCGA-A2-A0EO TCGA-A2-A0EO-01A
+## 20 TCGA-A2-A04P-01A-31R-A034-07 TCGA-A2-A04P TCGA-A2-A04P-01A
+##            sample_type initial_weight ajcc_pathologic_stage
+## 1  Solid Tissue Normal            260             Stage IIA
+## 2  Solid Tissue Normal            220             Stage IIB
+## 3  Solid Tissue Normal            130               Stage I
+## 4  Solid Tissue Normal            260              Stage IA
+## 5  Solid Tissue Normal            200             Stage IIB
+## 6  Solid Tissue Normal             60               Stage I
+## 7  Solid Tissue Normal            320             Stage IIB
+## 8  Solid Tissue Normal            310            Stage IIIA
+## 9  Solid Tissue Normal            100             Stage IIB
+## 10 Solid Tissue Normal            250             Stage IIB
+## 11       Primary Tumor            130             Stage IIA
+## 12       Primary Tumor            110              Stage IA
+## 13       Primary Tumor            470             Stage IIA
+## 14       Primary Tumor             90               Stage I
+## 15       Primary Tumor            200             Stage IIA
+## 16       Primary Tumor             70             Stage IIA
+## 17       Primary Tumor            130             Stage IIB
+## 18       Primary Tumor            770            Stage IIIA
+## 19       Primary Tumor            200              Stage IA
+## 20       Primary Tumor            250            Stage IIIC
+##    days_to_last_follow_up gender age_at_index
+## 1                      NA female           78
+## 2                      NA female           87
+## 3                    1644 female           78
+## 4                     501 female           63
+## 5                     660 female           41
+## 6                    3247 female           59
+## 7                      NA female           60
+## 8                      NA female           39
+## 9                    1876 female           54
+## 10                    707 female           51
+## 11                   5749 female           51
+## 12                     NA female           44
+## 13                   1972 female           64
+## 14                   1321 female           56
+## 15                    385 female           71
+## 16                   1800 female           71
+## 17                    214 female           63
+## 18                   1206 female           47
+## 19                   2442 female           54
+## 20                     NA female           36
+
+tmp <- read.table("datasets/brca_clin.txt",
+                  sep = "\t", # 必须要指定分隔符：\t，表示Tab键分隔
+                  header = T)
+tmp
+##                         barcode      patient           sample
+## 1  TCGA-BH-A1FC-11A-32R-A13Q-07 TCGA-BH-A1FC TCGA-BH-A1FC-11A
+## 2  TCGA-AC-A2FM-11B-32R-A19W-07 TCGA-AC-A2FM TCGA-AC-A2FM-11B
+## 3  TCGA-BH-A0DO-11A-22R-A12D-07 TCGA-BH-A0DO TCGA-BH-A0DO-11A
+## 4  TCGA-E2-A1BC-11A-32R-A12P-07 TCGA-E2-A1BC TCGA-E2-A1BC-11A
+## 5  TCGA-BH-A0BJ-11A-23R-A089-07 TCGA-BH-A0BJ TCGA-BH-A0BJ-11A
+## 6  TCGA-E2-A1LH-11A-22R-A14D-07 TCGA-E2-A1LH TCGA-E2-A1LH-11A
+## 7  TCGA-BH-A1FB-11A-33R-A13Q-07 TCGA-BH-A1FB TCGA-BH-A1FB-11A
+## 8  TCGA-BH-A18M-11A-33R-A12D-07 TCGA-BH-A18M TCGA-BH-A18M-11A
+## 9  TCGA-BH-A0BM-11A-12R-A089-07 TCGA-BH-A0BM TCGA-BH-A0BM-11A
+## 10 TCGA-E2-A153-11A-31R-A12D-07 TCGA-E2-A153 TCGA-E2-A153-11A
+## 11 TCGA-B6-A0RH-01A-21R-A115-07 TCGA-B6-A0RH TCGA-B6-A0RH-01A
+## 12 TCGA-BH-A1FU-01A-11R-A14D-07 TCGA-BH-A1FU TCGA-BH-A1FU-01A
+## 13 TCGA-AR-A0TX-01A-11R-A084-07 TCGA-AR-A0TX TCGA-AR-A0TX-01A
+## 14 TCGA-A1-A0SE-01A-11R-A084-07 TCGA-A1-A0SE TCGA-A1-A0SE-01A
+## 15 TCGA-OL-A5D6-01A-21R-A27Q-07 TCGA-OL-A5D6 TCGA-OL-A5D6-01A
+## 16 TCGA-E2-A1IK-01A-11R-A144-07 TCGA-E2-A1IK TCGA-E2-A1IK-01A
+## 17 TCGA-AN-A0FT-01A-11R-A034-07 TCGA-AN-A0FT TCGA-AN-A0FT-01A
+## 18 TCGA-A2-A3KD-01A-12R-A213-07 TCGA-A2-A3KD TCGA-A2-A3KD-01A
+## 19 TCGA-A2-A0EO-01A-11R-A034-07 TCGA-A2-A0EO TCGA-A2-A0EO-01A
+## 20 TCGA-A2-A04P-01A-31R-A034-07 TCGA-A2-A04P TCGA-A2-A04P-01A
+##            sample_type initial_weight ajcc_pathologic_stage
+## 1  Solid Tissue Normal            260             Stage IIA
+## 2  Solid Tissue Normal            220             Stage IIB
+## 3  Solid Tissue Normal            130               Stage I
+## 4  Solid Tissue Normal            260              Stage IA
+## 5  Solid Tissue Normal            200             Stage IIB
+## 6  Solid Tissue Normal             60               Stage I
+## 7  Solid Tissue Normal            320             Stage IIB
+## 8  Solid Tissue Normal            310            Stage IIIA
+## 9  Solid Tissue Normal            100             Stage IIB
+## 10 Solid Tissue Normal            250             Stage IIB
+## 11       Primary Tumor            130             Stage IIA
+## 12       Primary Tumor            110              Stage IA
+## 13       Primary Tumor            470             Stage IIA
+## 14       Primary Tumor             90               Stage I
+## 15       Primary Tumor            200             Stage IIA
+## 16       Primary Tumor             70             Stage IIA
+## 17       Primary Tumor            130             Stage IIB
+## 18       Primary Tumor            770            Stage IIIA
+## 19       Primary Tumor            200              Stage IA
+## 20       Primary Tumor            250            Stage IIIC
+##    days_to_last_follow_up gender age_at_index
+## 1                      NA female           78
+## 2                      NA female           87
+## 3                    1644 female           78
+## 4                     501 female           63
+## 5                     660 female           41
+## 6                    3247 female           59
+## 7                      NA female           60
+## 8                      NA female           39
+## 9                    1876 female           54
+## 10                    707 female           51
+## 11                   5749 female           51
+## 12                     NA female           44
+## 13                   1972 female           64
+## 14                   1321 female           56
+## 15                    385 female           71
+## 16                   1800 female           71
+## 17                    214 female           63
+## 18                   1206 female           47
+## 19                   2442 female           54
+## 20                     NA female           36
+
+# foreign包读取
+library(foreign)
+spss <- foreign::read.spss("datasets/例03-05.sav",to.data.frame = T)
+
+spss
+##    no  hb
+## 1   1 112
+## 2   2 137
+## 3   3 129
+## 4   4 126
+## 5   5  88
+## 6   6  90
+## 7   7 105
+## 8   8 178
+## 9   9 130
+## 10 10 128
+## 11 11 126
+## 12 12 103
+## 13 13 172
+## 14 14 116
+## 15 15 125
+## 16 16  90
+## 17 17  96
+## 18 18 162
+## 19 19 157
+## 20 20 151
+## 21 21 135
+## 22 22 113
+## 23 23 175
+## 24 24 129
+## 25 25 165
+## 26 26 171
+## 27 27 128
+## 28 28 128
+## 29 29 160
+## 30 30 110
+## 31 31 140
+## 32 32 163
+## 33 33 100
+## 34 34 129
+## 35 35 116
+## 36 36 127
+
+# haven包读取
+library(haven)
+spss <- read_sav("datasets/例03-05.sav")
+
+spss
+## # A tibble: 36 × 2
+##       no    hb
+##    <dbl> <dbl>
+##  1     1   112
+##  2     2   137
+##  3     3   129
+##  4     4   126
+##  5     5    88
+##  6     6    90
+##  7     7   105
+##  8     8   178
+##  9     9   130
+## 10    10   128
+## # ℹ 26 more rows
+
+# 直接加载
+load(file = "datasets/brca_example.rdata")# 注意要取一个名字
+tmp <- readRDS(file = "datasets/brca_example.rds") 
