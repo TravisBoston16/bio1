@@ -443,5 +443,131 @@ spss
 ## # ℹ 26 more rows
 
 # 直接加载
-load(file = "datasets/brca_example.rdata")# 注意要取一个名字
+load(file = "datasets/brca_example.rdata")
+# 注意要取一个名字
 tmp <- readRDS(file = "datasets/brca_example.rds") 
+
+dim(brca_clin)       # 查看数据有多少行多少列，dim是dimension的缩写
+## [1] 20  9
+str(brca_clin)       # 查看数据的结构，几行几列？数据类型？
+## 'data.frame':    20 obs. of  9 variables:
+##  $ barcode               : chr  "TCGA-BH-A1FC-11A-32R-A13Q-07" "TCGA-AC-A2FM-11B-32R-A19W-07" "TCGA-BH-A0DO-11A-22R-A12D-07" "TCGA-E2-A1BC-11A-32R-A12P-07" ...
+##  $ patient               : chr  "TCGA-BH-A1FC" "TCGA-AC-A2FM" "TCGA-BH-A0DO" "TCGA-E2-A1BC" ...
+##  $ sample                : chr  "TCGA-BH-A1FC-11A" "TCGA-AC-A2FM-11B" "TCGA-BH-A0DO-11A" "TCGA-E2-A1BC-11A" ...
+##  $ sample_type           : chr  "Solid Tissue Normal" "Solid Tissue Normal" "Solid Tissue Normal" "Solid Tissue Normal" ...
+##  $ initial_weight        : num  260 220 130 260 200 60 320 310 100 250 ...
+##  $ ajcc_pathologic_stage : chr  "Stage IIA" "Stage IIB" "Stage I" "Stage IA" ...
+##  $ days_to_last_follow_up: int  NA NA 1644 501 660 3247 NA NA 1876 707 ...
+##  $ gender                : chr  "female" "female" "female" "female" ...
+##  $ age_at_index          : int  78 87 78 63 41 59 60 39 54 51 ...
+class(brca_clin)     # 数据类型
+## [1] "data.frame"
+colnames(brca_clin)  # 查看列名
+## [1] "barcode"                "patient"                "sample"                
+## [4] "sample_type"            "initial_weight"         "ajcc_pathologic_stage" 
+## [7] "days_to_last_follow_up" "gender"                 "age_at_index"
+names(brca_clin)     # 查看列名
+## [1] "barcode"                "patient"                "sample"                
+## [4] "sample_type"            "initial_weight"         "ajcc_pathologic_stage" 
+## [7] "days_to_last_follow_up" "gender"                 "age_at_index"
+rownames(brca_clin)  # 查看行名
+##  [1] "TCGA-BH-A1FC-11A-32R-A13Q-07" "TCGA-AC-A2FM-11B-32R-A19W-07"
+##  [3] "TCGA-BH-A0DO-11A-22R-A12D-07" "TCGA-E2-A1BC-11A-32R-A12P-07"
+##  [5] "TCGA-BH-A0BJ-11A-23R-A089-07" "TCGA-E2-A1LH-11A-22R-A14D-07"
+##  [7] "TCGA-BH-A1FB-11A-33R-A13Q-07" "TCGA-BH-A18M-11A-33R-A12D-07"
+##  [9] "TCGA-BH-A0BM-11A-12R-A089-07" "TCGA-E2-A153-11A-31R-A12D-07"
+## [11] "TCGA-B6-A0RH-01A-21R-A115-07" "TCGA-BH-A1FU-01A-11R-A14D-07"
+## [13] "TCGA-AR-A0TX-01A-11R-A084-07" "TCGA-A1-A0SE-01A-11R-A084-07"
+## [15] "TCGA-OL-A5D6-01A-21R-A27Q-07" "TCGA-E2-A1IK-01A-11R-A144-07"
+## [17] "TCGA-AN-A0FT-01A-11R-A034-07" "TCGA-A2-A3KD-01A-12R-A213-07"
+## [19] "TCGA-A2-A0EO-01A-11R-A034-07" "TCGA-A2-A04P-01A-31R-A034-07"
+head(brca_clin)      # 查看前6行数据
+##                                                   barcode      patient
+## TCGA-BH-A1FC-11A-32R-A13Q-07 TCGA-BH-A1FC-11A-32R-A13Q-07 TCGA-BH-A1FC
+## TCGA-AC-A2FM-11B-32R-A19W-07 TCGA-AC-A2FM-11B-32R-A19W-07 TCGA-AC-A2FM
+## TCGA-BH-A0DO-11A-22R-A12D-07 TCGA-BH-A0DO-11A-22R-A12D-07 TCGA-BH-A0DO
+## TCGA-E2-A1BC-11A-32R-A12P-07 TCGA-E2-A1BC-11A-32R-A12P-07 TCGA-E2-A1BC
+## TCGA-BH-A0BJ-11A-23R-A089-07 TCGA-BH-A0BJ-11A-23R-A089-07 TCGA-BH-A0BJ
+## TCGA-E2-A1LH-11A-22R-A14D-07 TCGA-E2-A1LH-11A-22R-A14D-07 TCGA-E2-A1LH
+##                                        sample         sample_type
+## TCGA-BH-A1FC-11A-32R-A13Q-07 TCGA-BH-A1FC-11A Solid Tissue Normal
+## TCGA-AC-A2FM-11B-32R-A19W-07 TCGA-AC-A2FM-11B Solid Tissue Normal
+## TCGA-BH-A0DO-11A-22R-A12D-07 TCGA-BH-A0DO-11A Solid Tissue Normal
+## TCGA-E2-A1BC-11A-32R-A12P-07 TCGA-E2-A1BC-11A Solid Tissue Normal
+## TCGA-BH-A0BJ-11A-23R-A089-07 TCGA-BH-A0BJ-11A Solid Tissue Normal
+## TCGA-E2-A1LH-11A-22R-A14D-07 TCGA-E2-A1LH-11A Solid Tissue Normal
+##                              initial_weight ajcc_pathologic_stage
+## TCGA-BH-A1FC-11A-32R-A13Q-07            260             Stage IIA
+## TCGA-AC-A2FM-11B-32R-A19W-07            220             Stage IIB
+## TCGA-BH-A0DO-11A-22R-A12D-07            130               Stage I
+## TCGA-E2-A1BC-11A-32R-A12P-07            260              Stage IA
+## TCGA-BH-A0BJ-11A-23R-A089-07            200             Stage IIB
+## TCGA-E2-A1LH-11A-22R-A14D-07             60               Stage I
+##                              days_to_last_follow_up gender age_at_index
+## TCGA-BH-A1FC-11A-32R-A13Q-07                     NA female           78
+## TCGA-AC-A2FM-11B-32R-A19W-07                     NA female           87
+## TCGA-BH-A0DO-11A-22R-A12D-07                   1644 female           78
+## TCGA-E2-A1BC-11A-32R-A12P-07                    501 female           63
+## TCGA-BH-A0BJ-11A-23R-A089-07                    660 female           41
+## TCGA-E2-A1LH-11A-22R-A14D-07                   3247 female           59
+tail(brca_clin)      # 查看最后6行数据
+##                                                   barcode      patient
+## TCGA-OL-A5D6-01A-21R-A27Q-07 TCGA-OL-A5D6-01A-21R-A27Q-07 TCGA-OL-A5D6
+## TCGA-E2-A1IK-01A-11R-A144-07 TCGA-E2-A1IK-01A-11R-A144-07 TCGA-E2-A1IK
+## TCGA-AN-A0FT-01A-11R-A034-07 TCGA-AN-A0FT-01A-11R-A034-07 TCGA-AN-A0FT
+## TCGA-A2-A3KD-01A-12R-A213-07 TCGA-A2-A3KD-01A-12R-A213-07 TCGA-A2-A3KD
+## TCGA-A2-A0EO-01A-11R-A034-07 TCGA-A2-A0EO-01A-11R-A034-07 TCGA-A2-A0EO
+## TCGA-A2-A04P-01A-31R-A034-07 TCGA-A2-A04P-01A-31R-A034-07 TCGA-A2-A04P
+##                                        sample   sample_type initial_weight
+## TCGA-OL-A5D6-01A-21R-A27Q-07 TCGA-OL-A5D6-01A Primary Tumor            200
+## TCGA-E2-A1IK-01A-11R-A144-07 TCGA-E2-A1IK-01A Primary Tumor             70
+## TCGA-AN-A0FT-01A-11R-A034-07 TCGA-AN-A0FT-01A Primary Tumor            130
+## TCGA-A2-A3KD-01A-12R-A213-07 TCGA-A2-A3KD-01A Primary Tumor            770
+## TCGA-A2-A0EO-01A-11R-A034-07 TCGA-A2-A0EO-01A Primary Tumor            200
+## TCGA-A2-A04P-01A-31R-A034-07 TCGA-A2-A04P-01A Primary Tumor            250
+##                              ajcc_pathologic_stage days_to_last_follow_up
+## TCGA-OL-A5D6-01A-21R-A27Q-07             Stage IIA                    385
+## TCGA-E2-A1IK-01A-11R-A144-07             Stage IIA                   1800
+## TCGA-AN-A0FT-01A-11R-A034-07             Stage IIB                    214
+## TCGA-A2-A3KD-01A-12R-A213-07            Stage IIIA                   1206
+## TCGA-A2-A0EO-01A-11R-A034-07              Stage IA                   2442
+## TCGA-A2-A04P-01A-31R-A034-07            Stage IIIC                     NA
+##                              gender age_at_index
+## TCGA-OL-A5D6-01A-21R-A27Q-07 female           71
+## TCGA-E2-A1IK-01A-11R-A144-07 female           71
+## TCGA-AN-A0FT-01A-11R-A034-07 female           63
+## TCGA-A2-A3KD-01A-12R-A213-07 female           47
+## TCGA-A2-A0EO-01A-11R-A034-07 female           54
+## TCGA-A2-A04P-01A-31R-A034-07 female           36
+rm(brca_clin)        # 从当前环境（environment）中清除对象
+
+# 把tmp这个数据框保存为csv
+write.csv(tmp, # 要保存的对象
+          file = "datasets/111.csv", #保存到哪里？格式？ .csv不要忘记！
+          quote = F, # 不加引号
+          row.names = F # 有没有行名
+          )
+
+# 或者使用write.table
+write.table(tmp,
+            file = "datasets/111.csv", #保存到哪里，保存为什么格式，.csv不要忘记！
+            sep = ",",  # 必须指定分隔符！
+            quote = F, # 不加引号
+            row.names = F, # 行名
+            col.names = T # 列名
+            )
+
+write.table(tmp,
+            file = "datasets/222.txt",
+            sep = "\t", # 千万别忘记指定分隔符！
+            quote = F, # 不加引号
+            row.names = F, # 行名
+            col.names = T # 列名
+            )
+
+save(tmp,csv, # 同时保存多个对象
+     file = "datasets/tmp1.rdata") # 保存文件的位置和名字
+# rds格式不能同时保存多个对象
+saveRDS(tmp, file = "datasets/tmp.rds")
+
+
