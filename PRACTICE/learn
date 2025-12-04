@@ -570,4 +570,70 @@ save(tmp,csv, # 同时保存多个对象
 # rds格式不能同时保存多个对象
 saveRDS(tmp, file = "datasets/tmp.rds")
 
+# 把一个数字存储到变量my_integer中
+my_integer <- 5
+
+# 查看数据类型
+typeof(my_integer)
+## [1] "double"
+
+# 把一个小数存储到变量my_float中
+my_float <- 3.14
+typeof(my_float) # 查看数据类型
+## [1] "double"
+
+integer_variable <- 186L
+typeof((integer_variable))
+## [1] "integer"
+
+# 把一段文字存储到变量中
+my_string <- "Hello, R!"
+
+# 打印结果
+print(my_string)
+## [1] "Hello, R!"
+
+# 查看类型
+typeof(my_string)
+## [1] "character"
+
+# 即使把数字引起来，这个数字也会变成字符型！
+nu <- "123"
+nu
+## [1] "123"
+
+# 把一个逻辑值存储到变量中
+my_logical <- TRUE
+typeof(my_logical)
+## [1] "logical"
+
+
+TRUE + TRUE # 当成加减运算时，TRUE是1，FALSE是0！
+## [1] 2
+TRUE - FALSE
+## [1] 1
+
+与：&
+或：|
+非：!
+等于：==  # 这个要特别注意，R语言中的等于是两个等号！！！
+不等于：!= # 很少用
+大于：>
+大于等于：>=
+小于：<
+小于等于：<=
+
+TRUE | FALSE
+## [1] TRUE
+TRUE & FALSE
+## [1] FALSE
+
+is.numeric()   # 是不是数值型
+is.character() # 是不是字符型
+is.double()    # 是不是双精度型
+is.integer()   # 是不是整数型
+#is.factor()    # 是不是因子型
+is.complex()   # 是不是复数性
+is.logical()   # 是不是逻辑型
+
 
